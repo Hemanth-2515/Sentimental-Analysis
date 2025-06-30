@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentimental Analysis</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            color: black;
+            margin: 0;
+            padding: 20px;
+            background-image: url("{{ url_for('static', filename='background.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            overflow-x: hidden; /* ✅ Prevents horizontal movement */
+        }
+
+        .post-container {
+            display: flex;
+            flex-direction: column; /*  Stacks posts vertically */
+            align-items: center; /*  Centers horizontally */
+            justify-content: flex-start; /*  Allows scrolling */
+            gap: 20px; /*  Adds spacing */
+            width: 100%;
+            max-width: 600px; /*  Restricts width */
+            margin: auto;
+            position: relative; /*  Ensures posts stay intact */
+            padding-bottom: 50px; /*  Adds space for smooth scrolling */
+        }
+
+        .post {
+            width: 100%;
+            max-width: 600px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative; /*  Keeps posts steady */
+        }
+
+        .post img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            display: block;
+        }
+        input[type="text"] {
+            width: 90%;
+            padding: 8px;
+            margin-top: 5px;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .logout-button {
+        background-color: crimson;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 20px;
+    }
+
+    .logout-button:hover {
+        background-color: rgb(205, 38, 38);
+    }
+    </style>
+</head>
+<body>
+    <h1>Sentiment Analysis Posts</h1>
+    <div style="margin-bottom: 20px;">
+    <a href="{{ url_for('report') }}" style="background-color: green; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">View Sentiment Report</a>
+    </div>
+
+    <div class="post-container">
+        {% for post in posts %}
+        <div class="post">
+            <h3>Post ID: {{ post.id }}</h3>
+            <img src="{{ url_for('static', filename=post.id + '.jpg') }}" alt="Post Image">
+            <p>Sentiment: <strong>{{ post.sentiment }}</strong></p>
+
+            <!--  Comment Box for Sentiment Analysis -->
+            <form onsubmit="return analyzeSentiment(event);">
+                <input type="hidden" name="post_id" value="{{ post.id }}">
+                <input type="text" name="comment" placeholder="Enter your comment..." required>
+                <button type="submit">Analyze Sentiment</button>
+            </form>
+            <p id="sentiment-{{ post.id }}">
+    {% if post.sentiment %}
+        <strong>{{ post.sentiment }}</strong>
+    {% endif %}
+</p>
+<!-- To show updated sentiment -->
+
+
+            <!--  Button to View Sentiment Accuracy -->
+            <form method="POST" action="{{ url_for('check_accuracy') }}">
+                <input type="hidden" name="post_id" value="{{ post.id }}">
+                <button type="submit">View Sentiment Score</button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="logout-link">
+            <form method="GET" action="{{ url_for('logout') }}">
+                <button type="submit" class="logout-button">Logout</button>
+            </form>
+        </div>
+    <script>
+    function analyzeSentiment(event) {
+        event.preventDefault(); // Prevent full page reload
+
+        const form = event.target;
+        const post_id = form.querySelector('input[name="post_id"]').value;
+        const comment = form.querySelector('input[name="comment"]').value;
+
+        fetch("/post_comment", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: `post_id=${encodeURIComponent(post_id)}&comment=${encodeURIComponent(comment)}`
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Update sentiment on the page dynamically
+            document.getElementById(`sentiment-${post_id}`).textContent = `Updated Sentiment: ${data.sentiment}`;
+        })
+        .catch(error => console.error("Error:", error));
+
+        return false;
+    }
+    </script>
+</body>
+</html>

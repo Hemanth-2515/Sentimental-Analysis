@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socialise Login</title>
+    <style>
+        body {
+            font-family: "poppins", sans-serif; /* ✅ Modern, readable font */
+            text-align: center;
+            background-image: url("{{ url_for('static', filename='bg.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: black;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+        }
+
+        .login-container {
+            width: 300px;
+            margin: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 8px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+            color: black;
+            font-family: "Poppins", sans-serif;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px; /* ✅ Improved readability */
+            font-family: "Poppins", sans-serif;
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background-color: blue;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px; /* ✅ Matches input styling */
+            font-family: "Poppins", sans-serif;
+        }
+
+        button:hover {
+            background-color: darkblue;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <h1><i>Socialise</i></h1>
+    <p><i>"Connections make us stronger. The more we share, the more we grow!"</i></p>
+
+    <div class="login-container">
+        <form method="POST" action="{{ url_for('authenticate') }}">
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+
+        {% if error %}
+        <p style="color: red;">{{ error }}</p>
+        {% endif %}
+    </div>
+    
+</body>
+</html>

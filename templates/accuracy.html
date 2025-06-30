@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment Accuracy Score</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+            background-image: url("{{ url_for('static', filename='accuracy_bg.png') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: rgb(93, 189, 227); /* Ensures text is readable on dark backgrounds */
+        }
+
+        .accuracy-container {
+            width: 300px;
+            margin: auto;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.7); /* Slight transparent overlay */
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background-color: #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background-color: green;
+            transition: width 0.5s ease-in-out;
+        }
+
+        .accuracy-score {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+
+</head>
+<body>
+    <h1>Sentiment Accuracy Score</h1>
+    <div class="accuracy-container">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <p class="accuracy-score">Accuracy: <strong id="accuracyValue">{{ accuracy }}</strong></p> <!-- ✅ No percentage -->
+    </div>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let accuracy = parseFloat("{{ accuracy }}"); // ✅ Ensures accuracy is correctly read
+        document.getElementById("accuracyValue").textContent = accuracy.toFixed(2); // ✅ Displays two decimal places
+
+        let fillElement = document.getElementById("progressFill");
+        fillElement.style.width = (accuracy * 100) + "%"; // ✅ Expands progress bar
+
+        fillElement.style.backgroundColor = accuracy > 0.80 ? "green" : accuracy > 0.60 ? "orange" : "red"; // ✅ Changes color dynamically
+    });
+</script>
+</body>
+</html>
